@@ -2,52 +2,20 @@
 #include <vector>
 #include <chrono>
 #include <map>
-
-
-class time_container {
-private:
-    std::map<std::string, std::chrono::duration<double>> map;
-    std::chrono::time_point<std::chrono::steady_clock> start, tmp_start;
-    size_t size;
-    bool flag;
-
-public:
-    time_container() : size(0), flag(true) {};
-
-    void log(const std::string& func_name, const std::chrono::time_point<std::chrono::steady_clock>& time) {
-        if (flag) {
-            start = time;
-            flag = false;
-        } else {
-            map.insert({func_name, time - start});
-            flag = true;
-            ++size;
-        }
-    }
-
-
-    void print_map(){
-        for(auto [key, value] : map)
-            std::cout << key << " " << value.count() << std::endl;
-    }
-
-
-};
-//time_container timeContainer0;
-
-time_container timeContainer1;
+#include "time_container.h"
 
 class func{
 public:
     void h() {
         std::cout <<"h()"<< std::endl;
     }
+
     void g(int x, int y) {
         std::cout << x + y << std::endl;
 
-        timeContainer1.log("h()", std::chrono::high_resolution_clock::now());
+        time_container::log("h()", std::chrono::high_resolution_clock::now());
         h();
-        timeContainer1.log("h()", std::chrono::high_resolution_clock::now());
+        time_container::log("h()", std::chrono::high_resolution_clock::now());
     }
 };
 
@@ -63,13 +31,10 @@ int main() {
 
     func funk_;
 
-    timeContainer1.log("g()", std::chrono::high_resolution_clock::now());
+    time_container::log("g()", std::chrono::high_resolution_clock::now());
     funk_.g(4, 5);
-    timeContainer1.log("g()", std::chrono::high_resolution_clock::now());
-
-#ifdef PRINT
-    timeContainer1.print_map();
-#endif
+    time_container::log("g()", std::chrono::high_resolution_clock::now());
+    time_container::print_map();
 
     /* auto g_lambda = []() {
         start = std::chrono::high_resolution_clock::now();
